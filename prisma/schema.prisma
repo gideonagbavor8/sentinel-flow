@@ -1,0 +1,57 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+  CLIENT
+}
+
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  passwordHash  String
+  role          Role       @default(CLIENT)
+  mfaEnabled    Boolean    @default(false)
+  mfaSecret     String?
+  projects      Project[]
+  auditLogs     AuditLog[]
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  files       File[]
+  createdAt   DateTime @default(now())
+}
+
+model File {
+  id             String   @id @default(cuid())
+  s3Key          String   
+  fileName       String
+  encryptionType String   @default("SUPABASE_AES256")
+  projectId      String
+  project        Project  @relation(fields: [projectId], references: [id])
+  uploadedAt     DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  action    String   
+  ipAddress String
+  userAgent String
+  timestamp DateTime @default(now())
+}
