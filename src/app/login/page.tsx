@@ -28,7 +28,13 @@ export default function LoginPage() {
 
     if (!response.ok) {
       const data = await response.json();
-      setError(data?.error || 'Unable to sign in');
+      if (data.error === 'USER_NOT_FOUND') {
+        const msg = 'No account found with this email. Please register to continue.';
+        setError(msg);
+        window.alert(msg);
+      } else {
+        setError(data.error || 'Unable to sign in');
+      }
       return;
     }
 

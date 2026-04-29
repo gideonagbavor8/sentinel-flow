@@ -13,7 +13,10 @@ export async function POST(request: NextRequest) {
 
   const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
-    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    return NextResponse.json({ 
+      error: 'USER_NOT_FOUND', 
+      message: 'No account found with this email. Please register first.' 
+    }, { status: 404 });
   }
 
   const passwordMatches = await comparePassword(password, user.passwordHash);

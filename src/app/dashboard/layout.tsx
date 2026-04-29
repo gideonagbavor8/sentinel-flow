@@ -6,9 +6,9 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   await requireAuth();
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen bg-[#0f172a]">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto p-8" style={{ backgroundColor: 'var(--primary)' }}>
+      <main className="flex-1 overflow-y-auto">
         {children}
       </main>
     </div>

@@ -1,36 +1,32 @@
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth';
-import type { Role, User } from '@prisma/client';
+import { verifyToken } from './auth';
 
-const COOKIE_NAME = 'sentinel_session';
+export async function getServerSession() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('sentinel_session')?.value;
 
-export async function getCurrentUser(): Promise<User | null> {
-  const cookieStore = cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token) return null;
+  if (!token) {
+    return null;
+  }
 
   const payload = verifyToken(token);
-  if (!payload?.sub) return null;
+  if (!payload) {
+    return null;
+  }
 
-  const user = await prisma.user.findUnique({
-    where: { id: payload.sub },
-    select: { id: true, email: true, role: true, mfaEnabled: true },
-  });
-
-  return user;
+  return {
+    user: {
+      id: payload.sub,
+      role: payload.role,
+    },
+  };
 }
 
-export async function requireAuth(allowedRoles?: Role[]) {
-  const user = await getCurrentUser();
-  if (!user) {
+export async function requireAuth() {
+  const session = await getServerSession();
+  if (!session) {
     redirect('/login');
   }
-
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
-    redirect('/login');
-  }
-
-  return user;
+  return session;
 }

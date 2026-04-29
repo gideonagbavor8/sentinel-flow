@@ -24,15 +24,15 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-64 flex flex-col h-screen border-r" style={{ backgroundColor: 'var(--secondary)', borderColor: 'var(--primary)', color: '#1e293b' }}>
+    <aside className="w-64 flex flex-col h-screen border-r border-slate-800 bg-[#0f172a] text-slate-300">
       <div className="p-6 flex items-center gap-3">
-        <div className="p-2 rounded-lg" style={{ backgroundColor: 'var(--primary)' }}>
-          <ShieldCheck className="w-6 h-6" style={{ color: '#475569' }} />
+        <div className="p-2 rounded-xl bg-indigo-600/20 ring-1 ring-indigo-500/50">
+          <ShieldCheck className="w-6 h-6 text-indigo-400" />
         </div>
-        <span className="font-bold text-xl tracking-tight" style={{ color: '#0f172a' }}>Sentinel Flow</span>
+        <span className="font-bold text-xl tracking-tight text-white">Sentinel Flow</span>
       </div>
 
-      <nav className="flex-1 px-4 py-4 space-y-1">
+      <nav className="flex-1 px-4 py-4 space-y-2">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
 
@@ -41,36 +41,37 @@ export default function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200 group",
+                "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                 isActive
-                  ? "shadow-lg"
-                  : "hover:opacity-70"
+                  ? "bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]"
+                  : "hover:bg-slate-800/50 hover:text-white"
               )}
-              style={isActive ? { backgroundColor: 'var(--primary)', color: '#0f172a' } : { backgroundColor: 'transparent', color: '#334155' }}
             >
-              <item.icon className="w-5 h-5" style={{ color: isActive ? '#0f172a' : '#475569' }} />
-              <span className="text-sm font-medium">{item.name}</span>
+              <item.icon className={cn(
+                "w-5 h-5 transition-colors",
+                isActive ? "text-white" : "text-slate-400 group-hover:text-white"
+              )} />
+              <span className="text-sm font-semibold">{item.name}</span>
 
-              {/* Optional: Indicator dot for active state */}
               {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#0f172a' }} />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t" style={{ borderColor: 'var(--primary)' }}>
-        <div className="flex items-center gap-3 px-2 py-2">
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold" style={{ backgroundColor: 'var(--primary)', color: '#0f172a' }}>
+      <div className="p-4 border-t border-slate-800">
+        <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-slate-800/30 border border-slate-700/30">
+          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-black text-white shadow-lg ring-2 ring-indigo-500/20">
             GK
           </div>
           <div className="overflow-hidden">
-            <p className="text-sm font-medium truncate" style={{ color: '#0f172a' }}>Gideon Komla</p>
-            <p className="text-xs truncate text-nowrap" style={{ color: '#64748b' }}>Security Lead</p>
+            <p className="text-sm font-bold truncate text-white">Gideon Komla</p>
+            <p className="text-xs truncate text-slate-500 font-medium">Security Lead</p>
           </div>
         </div>
       </div>
     </aside>
   );
-}
+}
