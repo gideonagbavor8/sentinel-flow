@@ -1,14 +1,15 @@
 "use client"; // Required for usePathname
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Files,
   FolderTree,
   History,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,8 +21,14 @@ const navItems = [
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ userEmail, userRole }: { userEmail?: string; userRole?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    router.push('/login');
+  }
 
   return (
     <aside className="w-64 flex flex-col h-screen border-r border-slate-800 bg-[#0f172a] text-slate-300">
@@ -62,14 +69,23 @@ export default function Sidebar() {
       </nav>
 
       <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center gap-3 px-3 py-3 rounded-2xl bg-slate-800/30 border border-slate-700/30">
-          <div className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-black text-white shadow-lg ring-2 ring-indigo-500/20">
-            GK
+        <div className="flex items-center justify-between px-3 py-3 rounded-2xl bg-slate-800/30 border border-slate-700/30">
+          <div className="flex items-center gap-3 overflow-hidden">
+            <div className="w-10 h-10 shrink-0 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-black text-white shadow-lg ring-2 ring-indigo-500/20 uppercase">
+              {userEmail ? userEmail.substring(0, 2) : "US"}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-bold truncate text-white">{userEmail || "User"}</p>
+              <p className="text-xs truncate text-slate-500 font-medium capitalize">{userRole?.toLowerCase() || "Client"}</p>
+            </div>
           </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-bold truncate text-white">Gideon Komla</p>
-            <p className="text-xs truncate text-slate-500 font-medium">Security Lead</p>
-          </div>
+          <button 
+            onClick={handleLogout}
+            title="Sign out"
+            className="p-2 shrink-0 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+          >
+            <LogOut className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </aside>

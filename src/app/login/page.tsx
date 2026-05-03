@@ -4,6 +4,7 @@ import type { FormEvent } from 'react';
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { AlertCircle } from 'lucide-react';
 import styles from '@/app/auth-form.module.css';
 
 export default function LoginPage() {
@@ -29,9 +30,7 @@ export default function LoginPage() {
     if (!response.ok) {
       const data = await response.json();
       if (data.error === 'USER_NOT_FOUND') {
-        const msg = 'No account found with this email. Please register to continue.';
-        setError(msg);
-        window.alert(msg);
+        setError("We couldn't find an account matching that email. Please register to access the portal.");
       } else {
         setError(data.error || 'Unable to sign in');
       }
@@ -77,7 +76,28 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && (
+            <div className="flex gap-3 p-4 rounded-xl bg-red-500/10 border border-red-500/20 backdrop-blur-md animate-in fade-in slide-in-from-top-2 duration-300">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex flex-col">
+                <h3 className="text-sm font-semibold text-red-400 tracking-wide">
+                  {error.includes('register') ? 'Account Not Found' : 'Authentication Error'}
+                </h3>
+                <p className="text-sm text-red-300/90 mt-1 leading-relaxed">
+                  {error}
+                </p>
+                {error.includes('register') && (
+                  <Link 
+                    href="/register" 
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-red-400 hover:text-red-300 mt-3 transition-colors group w-fit pb-0.5 border-b border-red-500/30 hover:border-red-400"
+                  >
+                    {/* <span>Proceed to Registration</span> */}
+                    {/* <span className="group-hover:translate-x-1 transition-transform">→</span> */}
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
 
           <button type="submit" className={`${styles.authButton}`} disabled={loading}>
             {loading ? 'Signing in…' : 'Sign in'}
