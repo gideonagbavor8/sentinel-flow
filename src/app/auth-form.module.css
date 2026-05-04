@@ -4,32 +4,27 @@
   align-items: center;
   justify-content: center;
   background-color: var(--background);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(56, 189, 248, 0.1) 0px, transparent 50%);
 }
 
 .authCard {
   width: 100%;
   max-width: 26rem;
-  background-color: rgba(30, 41, 59, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
   border-radius: 1.5rem;
-  box-shadow: 
-    0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
 }
 
 .authTitle {
-  color: #ffffff;
+  color: var(--foreground);
   text-align: center;
   letter-spacing: -0.025em;
   font-weight: 800;
 }
 
 .authLabel {
-  color: #94a3b8;
+  color: var(--secondary);
   font-weight: 600;
   font-size: 0.85rem;
   text-transform: uppercase;
@@ -44,13 +39,12 @@
   outline: none;
   transition: all 0.2s ease;
   background-color: var(--input-bg);
-  color: #ffffff;
+  color: var(--foreground);
 }
 
 .authInput:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-  background-color: rgba(15, 23, 42, 0.8);
+  box-shadow: 0 0 0 4px rgba(191, 191, 191, 0.3); /* theme-light with opacity */
 }
 
 .authButton {
@@ -58,7 +52,7 @@
   border-radius: 0.75rem;
   padding: 1rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--background);
   background-color: var(--primary);
   border: none;
   transition: all 0.2s ease;
@@ -70,7 +64,7 @@
 .authButton:hover {
   background-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 15px -3px rgba(64, 64, 64, 0.2);
 }
 
 .authButton:active {
@@ -83,18 +77,18 @@
 }
 
 .authDescription {
-  color: #94a3b8;
+  color: var(--secondary);
   text-align: center;
 }
 
 .authLink {
   font-weight: 700;
-  color: var(--accent);
+  color: var(--primary);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .authLink:hover {
-  color: #ffffff;
+  color: var(--primary-hover);
   text-decoration: underline;
 }

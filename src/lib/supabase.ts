@@ -16,7 +16,7 @@ export const uploadFile = async (file: File, projectId: string) => {
   const filePath = `${projectId}/${fileName}`;
 
   const { data, error } = await supabase.storage
-    .from('sentinel-files')
+    .from('sentinel')
     .upload(filePath, file);
 
   if (error) throw error;

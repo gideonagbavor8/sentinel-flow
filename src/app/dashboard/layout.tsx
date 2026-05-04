@@ -12,7 +12,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   });
 
   return (
-    <div className="flex h-screen bg-[#0f172a]">
+    <div className="flex h-screen bg-[var(--background)]">
       <Sidebar userEmail={user?.email} userRole={user?.role} />
       <main className="flex-1 overflow-y-auto">
         {children}

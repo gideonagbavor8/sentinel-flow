@@ -31,12 +31,12 @@ export default function Sidebar({ userEmail, userRole }: { userEmail?: string; u
   }
 
   return (
-    <aside className="w-64 flex flex-col h-screen border-r border-slate-800 bg-[#0f172a] text-slate-300">
+    <aside className="w-64 flex flex-col h-screen border-r border-theme-light bg-theme-white text-theme-dark">
       <div className="p-6 flex items-center gap-3">
-        <div className="p-2 rounded-xl bg-indigo-600/20 ring-1 ring-indigo-500/50">
-          <ShieldCheck className="w-6 h-6 text-indigo-400" />
+        <div className="p-2 rounded-xl bg-theme-light/30 ring-1 ring-theme-mid/50">
+          <ShieldCheck className="w-6 h-6 text-theme-dark" />
         </div>
-        <span className="font-bold text-xl tracking-tight text-white">Sentinel Flow</span>
+        <span className="font-bold text-xl tracking-tight text-theme-black">Sentinel Flow</span>
       </div>
 
       <nav className="flex-1 px-4 py-4 space-y-2">
@@ -50,39 +50,39 @@ export default function Sidebar({ userEmail, userRole }: { userEmail?: string; u
               className={cn(
                 "flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 group relative overflow-hidden",
                 isActive
-                  ? "bg-indigo-600 text-white shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-                  : "hover:bg-slate-800/50 hover:text-white"
+                  ? "bg-theme-dark text-theme-white shadow-[0_0_10px_rgba(64,64,64,0.2)]"
+                  : "hover:bg-theme-light/30 hover:text-theme-black"
               )}
             >
               <item.icon className={cn(
                 "w-5 h-5 transition-colors",
-                isActive ? "text-white" : "text-slate-400 group-hover:text-white"
+                isActive ? "text-theme-white" : "text-theme-mid group-hover:text-theme-black"
               )} />
               <span className="text-sm font-semibold">{item.name}</span>
 
               {isActive && (
-                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                <div className="ml-auto w-1.5 h-1.5 rounded-full bg-theme-white shadow-[0_0_4px_rgba(255,255,255,0.8)]" />
               )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-slate-800">
-        <div className="flex items-center justify-between px-3 py-3 rounded-2xl bg-slate-800/30 border border-slate-700/30">
+      <div className="p-4 border-t border-theme-light">
+        <div className="flex items-center justify-between px-3 py-3 rounded-2xl bg-theme-light/10 border border-theme-light/50">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 shrink-0 rounded-full bg-indigo-600 flex items-center justify-center text-sm font-black text-white shadow-lg ring-2 ring-indigo-500/20 uppercase">
+            <div className="w-10 h-10 shrink-0 rounded-full bg-theme-dark flex items-center justify-center text-sm font-black text-theme-white shadow-lg ring-2 ring-theme-mid/20 uppercase">
               {userEmail ? userEmail.substring(0, 2) : "US"}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate text-white">{userEmail || "User"}</p>
-              <p className="text-xs truncate text-slate-500 font-medium capitalize">{userRole?.toLowerCase() || "Client"}</p>
+              <p className="text-sm font-bold truncate text-theme-black">{userEmail || "User"}</p>
+              <p className="text-xs truncate text-theme-mid font-medium capitalize">{userRole?.toLowerCase() || "Client"}</p>
             </div>
           </div>
           <button 
             onClick={handleLogout}
             title="Sign out"
-            className="p-2 shrink-0 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            className="p-2 shrink-0 rounded-xl text-theme-mid hover:text-theme-dark hover:bg-theme-light/30 transition-colors"
           >
             <LogOut className="w-5 h-5" />
           </button>
