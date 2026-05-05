@@ -1,24 +1,18 @@
 import { ReactNode } from "react";
 import Sidebar from "@/app/dashboard/sidebar";
 import { requireAuth } from "@/lib/session";
-import prisma from "@/lib/prisma";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await requireAuth();
 
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { email: true, role: true }
-  });
-
+  // Optimized: Use session data instead of making an extra database call
+  // This prevents the dashboard from hanging if the database connection is slow.
   return (
     <div className="flex h-screen bg-[var(--background)]">
-      <Sidebar userEmail={user?.email} userRole={user?.role} />
+      <Sidebar userEmail={session.user.email} userRole={session.user.role} />
       <main className="flex-1 overflow-y-auto">
         {children}
       </main>
     </div>
   );
 }
-
-

@@ -1,5 +1,5 @@
 import { requireAuth } from "@/lib/session";
-import prisma from "@/lib/prisma";
+import { supabaseAdmin } from "@/lib/supabase-server";
 import NewProjectButton from "./NewProjectButton";
 import Link from "next/link";
 import { FolderGit2, Calendar, FileText } from "lucide-react";
@@ -7,11 +7,17 @@ import { FolderGit2, Calendar, FileText } from "lucide-react";
 export default async function ProjectsPage() {
   const session = await requireAuth();
 
-  const projects = await prisma.project.findMany({
-    where: { userId: session.user.id },
-    orderBy: { createdAt: 'desc' },
-    include: { _count: { select: { files: true } } }
-  });
+  // Optimized fetching using Supabase Data API (HTTPS Port 443)
+  // This avoids the connection timeouts caused by the blocked Prisma ports.
+  const { data: projects, error } = await supabaseAdmin
+    .from('Project')
+    .select('*, File(count)')
+    .eq('userId', session.user.id)
+    .order('createdAt', { ascending: false });
+
+  if (error) {
+    console.error("Error fetching projects:", error);
+  }
 
   return (
     <div className="space-y-8 p-8 min-h-screen bg-[var(--background)]">
@@ -23,7 +29,7 @@ export default async function ProjectsPage() {
         <NewProjectButton />
       </div>
 
-      {projects.length === 0 ? (
+      {!projects || projects.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-16 bg-theme-white border border-dashed border-theme-light rounded-3xl mt-8">
           <div className="p-4 bg-theme-light/30 rounded-2xl mb-4">
             <FolderGit2 className="w-12 h-12 text-theme-dark" />
@@ -35,7 +41,7 @@ export default async function ProjectsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
-          {projects.map((project) => (
+          {projects.map((project: any) => (
             <Link href={`/dashboard/projects/${project.id}`} key={project.id}>
               <div className="group flex flex-col h-full p-6 rounded-2xl bg-theme-white border border-theme-light hover:bg-theme-light/10 hover:border-theme-dark hover:shadow-[0_0_15px_rgba(64,64,64,0.1)] transition-all duration-300">
                 <div className="flex items-start justify-between mb-4">
@@ -50,7 +56,7 @@ export default async function ProjectsPage() {
                 <div className="flex items-center justify-between text-xs font-medium text-theme-mid border-t border-theme-light pt-4 mt-auto">
                   <div className="flex items-center gap-1.5 bg-theme-light/20 px-2 py-1 rounded-md">
                     <FileText className="w-3.5 h-3.5 text-theme-dark" />
-                    <span className="text-theme-dark">{project._count.files} Files</span>
+                    <span className="text-theme-dark">{project.File?.[0]?.count || 0} Files</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Calendar className="w-3.5 h-3.5" />
