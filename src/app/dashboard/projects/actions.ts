@@ -1,7 +1,7 @@
 "use server"
 
 import { requireAuth } from "@/lib/session";
-import prisma from "@/lib/prisma";
+import { supabaseAdmin } from "@/lib/supabase-server";
 import { revalidatePath } from "next/cache";
 
 export async function createProject(formData: FormData) {
@@ -11,22 +11,26 @@ export async function createProject(formData: FormData) {
 
   if (!name) throw new Error("Project name is required");
 
-  await prisma.project.create({
-    data: {
+  // Create project using Supabase Data API (HTTPS Port 443)
+  const { error: projectError } = await supabaseAdmin
+    .from('Project')
+    .insert({
       name,
       description,
       userId: session.user.id
-    }
-  });
+    });
+
+  if (projectError) {
+    console.error("Project creation error:", projectError);
+    throw new Error("Failed to create the new secure workspace.");
+  }
 
   // Keep a record in the audit log for security purposes
-  await prisma.auditLog.create({
-    data: {
-      userId: session.user.id,
-      action: `Created new project: ${name}`,
-      ipAddress: "N/A", // This could be extracted from headers if needed
-      userAgent: "Server Action"
-    }
+  await supabaseAdmin.from('AuditLog').insert({
+    userId: session.user.id,
+    action: `Created new project: ${name}`,
+    ipAddress: "N/A", 
+    userAgent: "Server Action"
   });
 
   // Revalidate the projects page to show the new project instantly

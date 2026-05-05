@@ -17,7 +17,7 @@ const navItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "My Files", href: "/dashboard/files", icon: Files },
   { name: "Projects", href: "/dashboard/projects", icon: FolderTree },
-  { name: "Audit Logs", href: "/dashboard/logs", icon: History },
+  { name: "Security Logs", href: "/dashboard/logs", icon: History },
   { name: "Settings", href: "/dashboard/settings", icon: Settings },
 ];
 
@@ -75,7 +75,9 @@ export default function Sidebar({ userEmail, userRole }: { userEmail?: string; u
               {userEmail ? userEmail.substring(0, 2) : "US"}
             </div>
             <div className="overflow-hidden">
-              <p className="text-sm font-bold truncate text-theme-black">{userEmail || "User"}</p>
+              <p className="text-sm font-bold truncate text-theme-black">
+                {userEmail ? userEmail.split('@')[0] : "User"}
+              </p>
               <p className="text-xs truncate text-theme-mid font-medium capitalize">{userRole?.toLowerCase() || "Client"}</p>
             </div>
           </div>

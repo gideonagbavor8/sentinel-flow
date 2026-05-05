@@ -1,29 +1,32 @@
 import { requireAuth } from "@/lib/session";
-import prisma from "@/lib/prisma";
+import { supabaseAdmin } from "@/lib/supabase-server";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, File as FileIcon, Calendar, Lock } from "lucide-react";
 import UploadButton from "./UploadButton";
+import FileActions from "./FileActions";
 
 export default async function ProjectDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await requireAuth();
   const { id } = await params;
 
-  const project = await prisma.project.findUnique({
-    where: { 
-      id: id,
-      userId: session.user.id 
-    },
-    include: {
-      files: {
-        orderBy: { uploadedAt: 'desc' }
-      }
-    }
-  });
+  // Optimized fetching using Supabase Data API (HTTPS Port 443)
+  // This ensures the project details and file list load instantly.
+  const { data: project, error } = await supabaseAdmin
+    .from('Project')
+    .select('*, File(*)')
+    .eq('id', id)
+    .eq('userId', session.user.id)
+    .single();
 
-  if (!project) {
+  if (error || !project) {
     notFound();
   }
+
+  // Rename files from File to match the existing component logic
+  const files = (project.File || []).sort((a: any, b: any) => 
+    new Date(b.uploadedAt).getTime() - new Date(a.uploadedAt).getTime()
+  );
 
   return (
     <div className="space-y-8 p-8 min-h-screen bg-[var(--background)]">
@@ -64,7 +67,7 @@ export default async function ProjectDetailsPage({ params }: { params: Promise<{
       <div>
         <h2 className="text-xl font-bold text-theme-black mb-6">Project Files</h2>
         
-        {project.files.length === 0 ? (
+        {files.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-16 bg-theme-white border border-dashed border-theme-light rounded-3xl">
             <div className="p-4 bg-theme-light/30 rounded-2xl mb-4">
               <FileIcon className="w-12 h-12 text-theme-dark" />
@@ -77,19 +80,24 @@ export default async function ProjectDetailsPage({ params }: { params: Promise<{
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {project.files.map((file) => (
-              <div key={file.id} className="group p-5 rounded-2xl bg-theme-white border border-theme-light hover:border-theme-dark hover:shadow-lg transition-all duration-300 flex items-center justify-between">
+            {files.map((file: any) => (
+              <div key={file.id} className="group p-5 rounded-2xl bg-theme-white border border-theme-light hover:border-theme-dark hover:shadow-lg transition-all duration-300 flex flex-col">
                 <div className="flex items-center gap-4 overflow-hidden">
                   <div className="p-3 rounded-xl bg-theme-light/20 text-theme-dark group-hover:bg-theme-dark group-hover:text-theme-white transition-colors shrink-0">
                     <FileIcon className="w-6 h-6" />
                   </div>
                   <div className="overflow-hidden">
                     <h4 className="font-semibold text-theme-black truncate">{file.fileName}</h4>
-                    <p className="text-xs text-theme-mid mt-1">
+                    <p className="text-[10px] text-theme-mid mt-1 uppercase font-black tracking-widest bg-theme-light/30 px-1.5 py-0.5 rounded w-fit">
+                      {file.encryptionType}
+                    </p>
+                    <p className="text-xs text-theme-mid mt-1.5 font-medium">
                       {new Date(file.uploadedAt).toLocaleDateString()}
                     </p>
                   </div>
                 </div>
+
+                <FileActions fileId={file.id} />
               </div>
             ))}
           </div>

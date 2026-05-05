@@ -19,6 +19,7 @@ export async function getServerSession() {
     user: {
       id: payload.sub,
       role: payload.role,
+      email: payload.email,
     },
   };
 }

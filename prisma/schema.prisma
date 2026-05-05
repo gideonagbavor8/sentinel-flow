@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
 }
 
 enum Role {
@@ -21,8 +20,6 @@ model User {
   email         String     @unique
   passwordHash  String
   role          Role       @default(CLIENT)
-  mfaEnabled    Boolean    @default(false)
-  mfaSecret     String?
   projects      Project[]
   auditLogs     AuditLog[]
 }
